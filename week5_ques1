@@ -1,0 +1,43 @@
+from copy import deepcopy
+
+def move(state, block, to):
+    new_state = deepcopy(state)
+    new_state.remove(block)
+    new_state.insert(to, block)
+    return new_state
+
+def dfs(initial_state, goal_state):
+    stack = [(initial_state, [])]
+    visited = set()
+
+    while stack:
+        state, path = stack.pop()
+        if tuple(state) in visited:
+            continue
+        visited.add(tuple(state))
+
+        if state == goal_state:
+            return path
+
+        for i in range(len(state)):
+            if state[i] != 'table':
+                for j in range(len(state)):
+                    if state[j] == 'table' or (j < i and state[j] == 'table'):
+                        new_state = move(state, state[i], j)
+                        new_path = path + [(state[i], j)]
+                        stack.append((new_state, new_path))
+
+    return []
+
+# Example usage
+initial_state = ['A', 'B', 'C']
+goal_state = ['C', 'A', 'B']
+
+path = dfs(initial_state, goal_state)
+
+if path:
+    print("Solution found:")
+    for move in path:
+        print(f"Move '{move[0]}' to position {move[1]}")
+else:
+    print("No solution found")
