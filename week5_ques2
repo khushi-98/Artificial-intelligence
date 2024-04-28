@@ -1,0 +1,37 @@
+from collections import deque
+
+def bfs(initial_state, goal_state):
+    queue = deque([(initial_state, [])])
+    visited = set()
+
+    while queue:
+        state, path = queue.popleft()
+        if tuple(state) in visited:
+            continue
+        visited.add(tuple(state))
+
+        if state == goal_state:
+            return path
+
+        for i in range(len(state)):
+            if state[i] != 'table':
+                for j in range(len(state)):
+                    if state[j] == 'table' or (j < i and state[j] == 'table'):
+                        new_state = state[:j] + [state[i]] + state[j:i] + state[i+1:]
+                        new_path = path + [(state[i], j)]
+                        queue.append((new_state, new_path))
+
+    return []
+
+# Example usage
+initial_state = ['A', 'B', 'C']
+goal_state = ['C', 'A', 'B']
+
+path = bfs(initial_state, goal_state)
+
+if path:
+    print("Solution found:")
+    for move in path:
+        print(f"Move '{move[0]}' to position {move[1]}")
+else:
+    print("No solution found")
